@@ -213,7 +213,7 @@ textarea{resize:vertical;min-height:110px;line-height:1.5}
 @media (max-width:760px){.mast.solo-mast{align-items:flex-start;position:relative}.mast.solo-mast .langwrap{position:absolute;top:12px;inset-inline-end:max(16px,env(safe-area-inset-left,0px))}.mast.solo-mast .mast-photo{width:56px;height:56px;margin-top:14px}.mast.solo-mast .wrap{flex-direction:column;align-items:flex-start;gap:10px;padding-block:12px 14px}.mast.solo-mast .brand{padding-inline-end:58px}.mast.solo-mast .mast-contact{width:auto}}
 .solo-sheet{max-width:960px;margin:0 auto;box-shadow:var(--shadow)}
 .admin-acts{display:flex;flex-wrap:wrap;gap:8px}
-.edit-row .wa-mini{background:var(--wa);color:#fff}
+.edit-row .wa-mini{background:var(--wa);color:#fff} .edit-row .sold-mini{background:var(--sold);color:#fff} .card.is-sold{outline:3px solid var(--sold);outline-offset:-3px} .card.is-sold .badge.sold{font-size:15px;padding:6px 14px;letter-spacing:.04em} .card.is-sold .price{color:var(--sold);text-decoration:line-through;opacity:.8}
 .notice .btn{margin-inline-start:10px;padding:5px 12px}
 .import{border:1px solid var(--line);border-radius:14px;padding:10px 14px;background:var(--bg)}
 .import summary{cursor:pointer;font-weight:700}
@@ -1829,7 +1829,7 @@ function cover(a){return a.photos&&a.photos.length?'<img src="'+esc(a.photos[0])
 function visible(){
   var list=STATE.apts.filter(function(a){
     if(dealOf(a)!==ui.deal)return false;
-    if(!ui.sold&&a.status==='sold')return false;
+    
     if(ui.type!=='all'&&a.type!==ui.type)return false;
     if(ui.city&&a.city!==ui.city)return false;
     if(ui.rooms){var r=+ui.rooms;if(r>=5?a.rooms<5:Math.floor(a.rooms)!==r)return false}
@@ -1986,7 +1986,7 @@ function featPageHTML(){var hs=hotList(),s=STATE.settings,t=T(),N=NAVL[lang]||NA
   h+='<h1 class="lx-orb-t">'+esc(titleOf(a))+'</h1><div class="lx-orb-p num">'+priceHTML(a)+'</div><div class="lx-orb-s num">'+[a.rooms?a.rooms+' '+t.roomsShort:'',a.size?a.size+' '+t.sqm:'',floorTxt(a)].filter(Boolean).map(esc).join('<i aria-hidden="true">·</i>')+'</div>';
   h+='<div class="lx-orb-a"><button class="lx-btn lx-btn-dark" data-act="open" data-id="'+a.id+'">'+esc(t.details)+'</button>'+(waNum(s.phone)?'<a class="lx-btn lx-btn-line" data-act="link" href="'+esc(waLink(a))+'" target="_blank" rel="noopener">'+WA_ICON+esc(t.interested)+'</a>':'')+'</div>';
   if(hs.length>1)h+='<button class="lx-more" data-act="hot">'+esc((HOMEL[lang]||HOMEL.he).more(hs.length-1))+'</button>';
-  if(caps.canEdit)h+='<div class="lx-orb-adm" dir="rtl">'+lightsHTML(a)+pubBtn(a)+'<button class="lx-btn lx-btn-line" data-act="edit" data-id="'+a.id+'">עריכה</button></div>';
+  if(caps.canEdit)h+='<div class="lx-orb-adm" dir="rtl">'+lightsHTML(a)+pubBtn(a)+'<button class="lx-btn lx-btn-line" data-act="edit" data-id="'+a.id+'">עריכה</button>'+soldBtn(a,'lx-btn lx-btn-line')+'</div>';
   return h+'</div>'+miniBar(true,true)+'</section></main>'}
 function miniBar(light,noBroker){var s=STATE.settings,x=hx();return '<div class="hx-bar'+(light?' hx-bar-light':'')+'">'+(noBroker?'':'<span>'+esc(brokerLine())+'</span>')+(s.phone?'<a class="num" dir="ltr" href="'+esc(telHref(s.phone))+'">'+esc(s.phone)+'</a>':'')+'<button class="hx-a11y-link" data-act="a11y">'+esc(x.a11y)+'</button></div>'}
 function M_OWN(){return (MNL[lang]||MNL.he).owners}
@@ -2050,12 +2050,12 @@ function render(){
   if(!list.length&&!feat){if(!pool.length&&!ui.sold)h+='<div class="empty"><h3>'+esc(NONE[lang][0])+'</h3><p>'+esc(NONE[lang][1])+'</p>'+(caps.canEdit?'<p><button class="btn primary" data-act="new">+ הוספת דירה</button></p>':waNum(s.phone)?'<p><a class="btn wa" href="'+esc(waLink())+'" target="_blank" rel="noopener">'+WA_ICON+esc(t.sendWA)+'</a></p>':'')+'</div>';else h+='<div class="empty"><h3>'+esc(t.emptyT)+'</h3><p>'+esc(t.emptyP)+'</p></div>'}
   list.forEach(function(a){
     var b='';if(a.sample)b+='<span class="badge sample">'+esc(t.sample)+'</span>';if(a.starred)b+='<span class="badge hotb">★ '+esc(HOT[lang])+'</span>';if(a.status==='exclusive')b+='<span class="badge excl">'+esc(t.excl)+'</span>';if(a.status==='sold')b+='<span class="badge sold">'+esc(statusName(a))+'</span>';if((a.videos&&a.videos.length)||a.videoLink)b+='<span class="badge vid">'+PLAY+esc(VID[lang][0])+'</span>';
-    h+='<article class="card'+(a.status==='sold'?' is-sold':'')+(a.starred&&a.status!=='sold'?' is-hot':'')+'"><div class="media" role="button" tabindex="0" data-act="open" data-id="'+a.id+'" aria-label="'+esc(t.detailsOf(a.id))+'">'+cover(a)+'<div class="badges">'+b+'</div>'+(a.photos&&a.photos.length>1?'<span class="pcount num">'+esc(t.photos(a.photos.length))+'</span>':'')+(caps.canEdit?'<div class="edit-row" dir="rtl"><button data-act="edit" data-id="'+a.id+'">עריכה</button><button class="wa-mini" data-act="share" data-id="'+a.id+'">שליחה ללקוח</button></div>':'')+'</div>';
+    h+='<article class="card'+(a.status==='sold'?' is-sold':'')+(a.starred&&a.status!=='sold'?' is-hot':'')+'"><div class="media" role="button" tabindex="0" data-act="open" data-id="'+a.id+'" aria-label="'+esc(t.detailsOf(a.id))+'">'+cover(a)+'<div class="badges">'+b+'</div>'+(a.photos&&a.photos.length>1?'<span class="pcount num">'+esc(t.photos(a.photos.length))+'</span>':'')+(caps.canEdit?'<div class="edit-row" dir="rtl"><button data-act="edit" data-id="'+a.id+'">עריכה</button><button class="wa-mini" data-act="share" data-id="'+a.id+'">שליחה ללקוח</button>'+soldBtn(a,'sold-mini')+'</div>':'')+'</div>';
     h+='<div class="body" data-act="open" data-id="'+a.id+'" style="cursor:pointer"><div class="price num">'+priceHTML(a)+'</div><div class="loc">'+esc(locOf(a))+(a.hood?' <em>· '+esc(L(a,'hood'))+'</em>':'')+lightsHTML(a)+'</div>';
     h+='<div class="specs num">'+(a.rooms?'<span><b>'+a.rooms+'</b> '+t.roomsShort+'</span>':'')+(a.size?'<span><b>'+a.size+'</b> '+t.sqm+'</span>':'')+'<span>'+esc(floorTxt(a))+'</span>'+(balTxt(a)?'<span>'+esc(balTxt(a))+'</span>':'')+'</div>';
     h+='<div class="feats">'+featsHTML(a,4)+'</div><div class="card-foot"><span class="ref num">'+esc(t.ref(a.id))+'</span>'+pubBtn(a)+(a.status!=='sold'&&waNum(s.phone)?'<a class="btn wa interest" data-act="link" href="'+esc(waLink(a))+'" target="_blank" rel="noopener">'+WA_ICON+esc(t.interested)+'</a>':'')+'</div></div></article>';
   });
-  h+='</section>'+soldHTML()}
+  h+='</section>'}
   h+=ownersHTML()+'</main>'+footHTML();}
   if(ui.open!=null)h+=detailHTML();
   if(ui.hot&&ui.open==null)h+=hotHTML();
@@ -2075,7 +2075,7 @@ function render(){
 function featHTML(fa,t,s){
   return '<section class="featured'+(fa.starred?' hot':'')+'" aria-label="'+esc(t.featured)+'">'+(fa.starred?'<div class="hotband"><span class="hotstar" aria-hidden="true">★</span>'+esc(HOT[lang])+'</div>':'')+'<div class="fgrid"><div class="fmedia" data-act="open" data-id="'+fa.id+'" role="button" tabindex="0" aria-label="'+esc(t.detailsOf(fa.id))+'">'+cover(fa)+'<div class="badges">'+(fa.sample?'<span class="badge sample">'+esc(t.sample)+'</span>':'')+'</div></div><div class="ftext"><span class="eyebrow">'+esc(fa.status==='exclusive'?t.featExcl:t.featNew)+'</span><h2>'+esc(titleOf(fa))+'</h2>'+(caps.canEdit?'<div>'+lightsHTML(fa)+'</div>':'')+'<div class="price num">'+priceHTML(fa)+'</div><div class="specs num">'+(fa.size?'<span><b>'+fa.size+'</b> '+t.sqm+'</span>':'')+'<span>'+esc(floorTxt(fa))+'</span>'+(balTxt(fa)?'<span>'+esc(balTxt(fa))+'</span>':'')+'</div><div class="feats">'+featsHTML(fa,5)+'</div><div class="acts"><button class="btn primary" data-act="open" data-id="'+fa.id+'">'+esc(t.details)+'</button>'+pubBtn(fa)+(waNum(s.phone)?'<a class="btn wa" data-act="link" href="'+esc(waLink(fa))+'" target="_blank" rel="noopener">'+WA_ICON+esc(t.interested)+'</a>':'')+'</div></div></div></section>'
 }
-function find(id){for(var i=0;i<STATE.apts.length;i++)if(STATE.apts[i].id==id)return STATE.apts[i];return null}
+function soldBtn(a,cls){return '<button class="'+cls+'" data-act="mark-sold" data-id="'+a.id+'">'+(a.status==='sold'?'↺ החזרה לזמינה':(isRent(a)?'✓ הושכרה':'✓ נמכרה'))+'</button>'} function find(id){for(var i=0;i<STATE.apts.length;i++)if(STATE.apts[i].id==id)return STATE.apts[i];return null}
 function detailBody(a){
   var t=T();var ph=a.photos||[],i=Math.min(ui.photo,Math.max(0,ph.length-1)),s=STATE.settings,rtl=lang==='he';
   var h='<div class="gallery">'+(ph.length?'<img src="'+esc(ph[i])+'" alt="'+esc(titleOf(a))+' · '+(i+1)+' / '+ph.length+'">':art(a));
@@ -2091,7 +2091,7 @@ function detailBody(a){
   h+='<p>'+esc(a.status==='sold'?t.soldMsg(isRent(a)):t.contactMsg)+'</p>';
   if(waNum(s.phone))h+='<a class="btn wa" href="'+esc(waLink(a))+'" target="_blank" rel="noopener">'+WA_ICON+esc(t.askWA)+'</a><span class="hint">'+esc(t.orPhone)+' <span class="phone num">'+esc(s.phone)+'</span></span>';else h+='<p class="hint">'+esc(t.soon)+'</p>';
   h+='</div><ul class="allfeats">'+FEATS.map(function(f){var y=(a.features||[]).indexOf(f)>=0;return '<li class="'+(y?'':'no')+'"><span class="dot"></span>'+esc(fn(f))+'</li>'}).join('')+'</ul>';
-  if(caps.canEdit)h+='<div class="admin-acts" dir="rtl"><button class="btn" data-act="edit" data-id="'+a.id+'">עריכת הדירה</button><button class="btn wa" data-act="share" data-id="'+a.id+'">'+WA_ICON+'שליחת הדירה ללקוח</button>'+pubBtn(a)+'</div>';
+  if(caps.canEdit)h+='<div class="admin-acts" dir="rtl"><button class="btn" data-act="edit" data-id="'+a.id+'">עריכת הדירה</button><button class="btn wa" data-act="share" data-id="'+a.id+'">'+WA_ICON+'שליחת הדירה ללקוח</button>'+pubBtn(a)+soldBtn(a,'btn danger')+'</div>';
   h+='</div></div>';
   if(a.status!=='sold'&&waNum(s.phone))h+='<div class="stickybar"><a class="btn wa" href="'+esc(waLink(a))+'" target="_blank" rel="noopener">'+WA_ICON+esc(t.interested)+'</a></div>';
   return h;
@@ -2866,7 +2866,8 @@ app.addEventListener('click',async function(ev){
   else if(act==='ph'){var a=find(ui.open!=null?ui.open:ui.solo),n=a.photos.length;ui.photo=(ui.photo+(+v)+n)%n;render()}
   else if(act==='phi'){ui.photo=+v;render()}
   else if(act==='new'){aiv=null;imp={busy:false,msg:'',ok:false};draft={id:STATE.nextId,deal:ui.deal,type:'apartment',status:'available',city:'אשדוד',hood:'',street:'',price:'',rooms:'',size:'',floor:'',floors:'',balconies:'',balconySize:'',gardenSize:'',features:[],desc:'',photos:[],videos:[],videoLink:''};armed=false;errMsg='';ui.open=null;render()}
-  else if(act==='edit'){ev.stopPropagation();aiv=null;imp={busy:false,msg:'',ok:false};draft=JSON.parse(JSON.stringify(find(id)));armed=false;errMsg='';ui.open=null;render()}
+  else if(act==='mark-sold'){ev.stopPropagation();var sa=find(id);if(!sa)return;var sbk=JSON.stringify(STATE);sa.status=sa.status==='sold'?'available':'sold';if(sa.status==='sold')sa.soldAt=Date.now();else delete sa.soldAt;ui.open=null;render();publishState().then(function(){toast(sa.status==='sold'?(isRent(sa)?'הדירה סומנה כמושכרת ✓':'הדירה סומנה כנמכרה ✓'):'הדירה חזרה לזמינה ✓')}).catch(function(e){STATE=JSON.parse(sbk);render();toast('השמירה לא הצליחה – נסו שוב')})}
+   else if(act==='edit'){ev.stopPropagation();aiv=null;imp={busy:false,msg:'',ok:false};draft=JSON.parse(JSON.stringify(find(id)));armed=false;errMsg='';ui.open=null;render()}
   else if(act==='cancel'){draft=null;aiv=null;imp={busy:false,msg:'',ok:false};ui.share=null;ui.settings=false;errMsg='';busy=false;render()}
   else if(act==='ph-main'){readDraft();var p=draft.photos.splice(+v,1)[0];draft.photos.unshift(p);render()}
   else if(act==='ph-del'){readDraft();draft.photos.splice(+v,1);render()}
