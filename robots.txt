@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://tali-nadlan.galanter-il.com/sitemap.xml
