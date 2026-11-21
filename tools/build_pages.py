@@ -218,8 +218,8 @@ for a in apts:
 for lang, fn in (("he", "index.html"), ("ru", "index-ru.html")):
     t = T[lang]
     ttl = t["alltitle"]
-    d = ("כל הדירות והבתים למכירה ולהשכרה של טלי גלנטר נדל״ן באשדוד, גן יבנה והסביבה." if lang == "he"
-         else "Квартиры и дома на продажу и в аренду в Ашдоде, Ган-Явне и окрестностях – Тали Галантер, недвижимость.")
+    d = ("כל הדירות והבתים למכירה ולהשכרה של טלי גלנטר נדל״ן באשדוד, גן יבנה, אשקלון והסביבה." if lang == "he"
+         else "Квартиры и дома на продажу и в аренду в Ашдоде, Ган-Явне, Ашкелоне и окрестностях – Тали Галантер, недвижимость.")
     other = "/apt/index-ru.html" if lang == "he" else "/apt/"
     h = head(lang, ttl, d, SITE + ("/apt/" if lang == "he" else "/apt/index-ru.html"), HOME_IMG) + header(lang, other)
     h += f'<main class="wrap"><h1>{esc(ttl)}</h1>{listing(avail + [a for a in apts if a.get("status") == "sold"], lang)}</main>'
@@ -227,7 +227,7 @@ for lang, fn in (("he", "index.html"), ("ru", "index-ru.html")):
 
 
 # City pages: one page per city that has properties
-CITY_SLUG = {"אשדוד": "ashdod", "גן יבנה": "gan-yavne"}
+CITY_SLUG = {"אשדוד": "ashdod", "גן יבנה": "gan-yavne", "אשקלון": "ashkelon"}
 os.makedirs("area", exist_ok=True)
 for f in os.listdir("area"):
     if f.endswith(".html"): os.remove(os.path.join("area", f))
@@ -256,9 +256,9 @@ open("robots.txt", "w").write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitem
 
 # Open Graph + structured data on the home page (idempotent)
 src = re.sub(r"\n?<!-- seo:start -->.*?<!-- seo:end -->", "", src, flags=re.S)
-home_desc = "טלי גלנטר נדל״ן – דירות ובתים למכירה ולהשכרה באשדוד, גן יבנה והסביבה. ליווי אישי ומקצועי, מתווכת מוסמכת."
+home_desc = "טלי גלנטר נדל״ן – דירות ובתים למכירה ולהשכרה באשדוד, גן יבנה, אשקלון והסביבה. ליווי אישי ומקצועי, מתווכת מוסמכת."
 agent_ld = {"@context": "https://schema.org", "@type": "RealEstateAgent", "name": BRAND, "url": SITE + "/",
-            "telephone": PHONE, "image": HOME_IMG, "areaServed": ["אשדוד", "גן יבנה"], "sameAs": SOCIAL,
+            "telephone": PHONE, "image": HOME_IMG, "areaServed": ["אשדוד", "גן יבנה", "אשקלון"], "sameAs": SOCIAL,
             "address": {"@type": "PostalAddress", "addressLocality": "אשדוד", "addressCountry": "IL"}}
 block = ('\n<!-- seo:start -->'
          f'<meta property="og:type" content="website"><meta property="og:site_name" content="{esc(BRAND)}">'
