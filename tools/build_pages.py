@@ -225,6 +225,29 @@ for lang, fn in (("he", "index.html"), ("ru", "index-ru.html")):
     h += f'<main class="wrap"><h1>{esc(ttl)}</h1>{listing(avail + [a for a in apts if a.get("status") == "sold"], lang)}</main>'
     open("apt/" + fn, "w", encoding="utf-8").write(h + footer(lang) + "</body></html>")
 
+
+# City pages: one page per city that has properties
+CITY_SLUG = {"אשדוד": "ashdod", "גן יבנה": "gan-yavne"}
+os.makedirs("area", exist_ok=True)
+for f in os.listdir("area"):
+    if f.endswith(".html"): os.remove(os.path.join("area", f))
+for city, slug in CITY_SLUG.items():
+    here = [a for a in avail if a.get("city") == city]
+    if not here: continue
+    sale = [a for a in here if a["deal"] != "rent"]; rent = [a for a in here if a["deal"] == "rent"]
+    ttl = f"דירות ובתים למכירה ולהשכרה ב{city} | {BRAND}"
+    d = f"נכסים עדכניים למכירה ולהשכרה ב{city} מבית {BRAND}: {len(sale)} למכירה, {len(rent)} להשכרה. ליווי אישי של מתווכת מוסמכת – {PHONE}."
+    url = f"{SITE}/area/{slug}.html"
+    hoods = sorted({a.get('hood') for a in here if a.get('hood')})
+    h = head("he", ttl, d, url, HOME_IMG) + header("he", "/apt/index-ru.html")
+    h += f'<main class="wrap"><h1>נכסים למכירה ולהשכרה ב{esc(city)}</h1>'
+    h += f'<p>{esc(AGENT)}, מתווכת מקרקעין מוסמכת (רישיון {esc(LIC)}), מלווה קונים, מוכרים, שוכרים ומשכירים ב{esc(city)}' + (f" – בין היתר ב{esc(', '.join(hoods))}" if hoods else "") + f'. מחפשים נכס או רוצים למכור? <a href="tel:{esc(PHONE)}">{esc(PHONE)}</a></p>'
+    if sale: h += "<h2>למכירה</h2>" + listing(sale, "he")
+    if rent: h += "<h2>להשכרה</h2>" + listing(rent, "he")
+    h += "</main>"
+    open(f"area/{slug}.html", "w", encoding="utf-8").write(h + footer("he") + "</body></html>")
+    urls.append(url)
+
 today = datetime.date.today().isoformat()
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 sm += "".join(f"  <url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n" for u in urls)
