@@ -955,6 +955,7 @@ body{font-family:var(--lx-sans);color:var(--ink)}
 .lx-dlinks{display:flex;flex-direction:column;padding:14px 0}
 .lx-dlink{background:none;border:0;border-bottom:1px solid var(--line);padding:18px 2px;text-align:start;font:400 24px var(--lx-serif);color:var(--ink);cursor:pointer}
 .lx-dlink[aria-current="page"]{color:var(--brass)}
+a.lx-dlink{display:flex;text-decoration:none}
 .lx-dsoc{padding:18px 0}
 .lx-dsoc>div,.lx-fsoc{display:flex;flex-wrap:wrap;gap:8px}
 .lx-socb{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font:400 14px var(--lx-sans);cursor:pointer}
@@ -1902,6 +1903,9 @@ var NAVL={
  ru:{hot:'Предложение',about:'Обо мне',contact:'Контакты',browse:'Смотреть объекты',talk:'WhatsApp',talkLong:'Написать в WhatsApp',menu:'Меню',close:'Закрыть',follow:'Соцсети',coll:'Наши объекты',hotK:'Избранное',hotH:'Возможность, которую нельзя упустить',hotP:'Объект, который я выбрала особо – стоит увидеть его первым.',call:'Позвонить',lic:'Лицензия брокера',tour:'Видеотур'},
  fr:{hot:'Occasion',about:'À propos',contact:'Contact',browse:'Voir les biens',talk:'WhatsApp',talkLong:'Écrire sur WhatsApp',menu:'Menu',close:'Fermer',follow:'Réseaux',coll:'Nos biens',hotK:'Coup de cœur',hotH:'Une occasion à ne pas manquer',hotP:'Un bien choisi avec soin – à découvrir avant tout le monde.',call:'Appeler',lic:'Licence',tour:'Visite vidéo'}};
 function telHref(p){return 'tel:'+String(p||'').replace(/[^\d+]/g,'')}
+/* ביקורות בגוגל – מעבר לדף העסק בגוגל */
+var GRV_URL='https://www.google.com/maps?cid=11894842395457452441';
+var GRV={he:'ביקורות בגוגל',en:'Google reviews',ru:'Отзывы в Google',fr:'Avis Google'};
 var MNL={he:{lang:'שפה',acc:'נגישות',share:'שיתוף האתר',copy:'העתקת קישור',more:'שיתוף אחר',admin:'ניהול – רק את רואה',office:'פרטי המשרד',add:'הוספת דירה',leads:'פניות',card:'כרטיס ביקור',qr:'קוד QR',contact:'יצירת קשר',owners:'רוצה למכור או להשכיר - דבר איתי'},
  en:{lang:'Language',acc:'Accessibility',share:'Share this site',copy:'Copy link',more:'More options',admin:'Admin',office:'Office details',add:'Add property',leads:'Leads',card:'Business card',qr:'QR code',contact:'Contact',owners:'Want to sell or rent out? Talk to me'},
  ru:{lang:'Язык',acc:'Доступность',share:'Поделиться сайтом',copy:'Скопировать ссылку',more:'Другие варианты',admin:'Управление',office:'Данные офиса',add:'Добавить объект',leads:'Заявки',card:'Визитка',qr:'QR-код',contact:'Контакты',owners:'Хотите продать или сдать? Напишите мне'},
@@ -1914,7 +1918,7 @@ function navHTML(cnt,cur){var t=T(),s=STATE.settings,N=NAVL[lang]||NAVL.he,m=SID
     var it=function(attrs,label,n,ic,curr){return '<button class="lx-dlink"'+attrs+(curr?' aria-current="page"':'')+'>'+(ic?'<span class="lx-dic">'+ic+'</span>':'')+'<span class="lx-dl">'+esc(label)+'</span>'+(n!=null?'<b class="num">'+n+'</b>':'')+'</button>'};
     var v=function(x,label,n,ic){return it(' data-act="view" data-v="'+x+'"',label,n,ic,ui.view===x)};
     h+='<div class="lx-scrim" data-act="menu-close" aria-hidden="true"></div><nav id="lx-drawer" class="lx-drawer" aria-label="'+esc(N.menu)+'"><div class="lx-dhead"><span class="lx-bn"><b>'+esc(S('name'))+'</b>'+(S('office2')?'<small>'+esc(S('office2'))+'</small>':'')+'</span><button class="lx-dx" data-act="menu-close" aria-label="'+esc(N.close)+'">×</button></div>';
-    h+='<div class="lx-dlinks">'+v('home',HM.home,null,LOGO)+(hotList().length?v('feat',N.hotH,null,IC_STAR):'')+v('sale',HM.sale,cnt.sale,IC_SALE)+v('rent',HM.rent,cnt.rent,IC_RENT)+(S('about')?it(' data-act="about"',N.about,null,PERSON):'')+(waNum(s.phone)?v('owners',M.owners,null,WA_ICON):'')+v('reviews',RV().m,(STATE.reviews||[]).length||null,IC_QUOTE)+'</div>';
+    h+='<div class="lx-dlinks">'+v('home',HM.home,null,LOGO)+(hotList().length?v('feat',N.hotH,null,IC_STAR):'')+v('sale',HM.sale,cnt.sale,IC_SALE)+v('rent',HM.rent,cnt.rent,IC_RENT)+(S('about')?it(' data-act="about"',N.about,null,PERSON):'')+(waNum(s.phone)?v('owners',M.owners,null,WA_ICON):'')+v('reviews',RV().m,(STATE.reviews||[]).length||null,IC_QUOTE)+'<a class="lx-dlink lx-grv" data-act="link" href="'+esc(GRV_URL)+'" target="_blank" rel="noopener"><span class="lx-dic">'+IC_STAR+'</span><span class="lx-dl">'+esc(GRV[lang]||GRV.he)+'</span></a></div>';
     h+='<div class="lx-dsec"><span class="lx-cap">'+esc(N.follow)+'</span><div class="lx-chips">'+['fb','ig','tt'].map(function(p){return '<button class="lx-socb" data-act="view" data-v="'+p+'"'+(ui.view===p?' aria-current="page"':'')+'>'+socIcon(p)+'<span>'+esc(m[p])+'</span></button>'}).join('')+'</div></div>';
     var sd=siteShareData(),msg=sd.text+'\n'+sd.url;
     h+='<div class="lx-dsec"><span class="lx-cap">'+esc(M.share)+'</span><div class="lx-chips"><a class="lx-socb" data-act="link" href="https://wa.me/?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener">'+WA_ICON+'<span>WhatsApp</span></a><button class="lx-socb" data-act="ss-copy">'+SHARE_IC+'<span>'+esc(M.copy)+'</span></button>'+(navigator.share?'<button class="lx-socb" data-act="ss-native"><span>'+esc(M.more)+'</span></button>':'')+'</div></div>';
